@@ -20,6 +20,15 @@ class Database:
 
     async def connect(self):
         self.pool = await asyncpg.create_pool(DB_URL)
+        await self.init_tables()
+
+    async def init_tables(self):
+        async with self.pool.acquire() as conn:
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS users(
+                    discord_id BIGINT PRIMARY KEY
+                );
+            """)
 
     async def user_exists(self, discord_id):
         async with self.pool.acquire() as conn:
