@@ -24,4 +24,12 @@ async def on_ready():
     await bot.tree.sync(guild=GUILD_ID)
     print(f'Logged in as {bot.user.name} and ready to serve!')
 
+@bot.tree.command(name="register", description="Register a new user", guild=GUILD_ID)
+async def register(interaction: discord.Interaction):
+    if await db.user_exists(interaction.user.id):
+        await interaction.response.send_message("❌ You are already registered!")
+    else:
+        await db.add_user(interaction.user.id)
+        await interaction.response.send_message("✅ Registration successful! Welcome to NOVA-nians!")
+
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
